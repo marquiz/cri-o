@@ -167,6 +167,9 @@ func mergeConfig(config *libconfig.Config, ctx *cli.Context) error {
 	if ctx.IsSet("irqbalance-config-file") {
 		config.IrqBalanceConfigFile = ctx.String("irqbalance-config-file")
 	}
+	if ctx.IsSet("rdt-config-file") {
+		config.RdtConfigFile = ctx.String("rdt-config-file")
+	}
 	if ctx.IsSet("cgroup-manager") {
 		config.CgroupManagerName = ctx.String("cgroup-manager")
 	}
@@ -555,6 +558,11 @@ func getCrioFlags(defConf *libconfig.Config) []cli.Flag {
 			Name:  "irqbalance-config-file",
 			Usage: "The irqbalance service config file which is used by CRI-O.",
 			Value: defConf.IrqBalanceConfigFile,
+		},
+		&cli.StringFlag{
+			Name:  "rdt-config-file",
+			Usage: "The RDT configuration file for configuring the resctrl filesystem",
+			Value: defConf.RdtConfigFile,
 		},
 		&cli.BoolFlag{
 			Name:    "selinux",
