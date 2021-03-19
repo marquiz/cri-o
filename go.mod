@@ -35,6 +35,7 @@ require (
 	github.com/google/renameio v1.0.1
 	github.com/google/uuid v1.2.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
+	github.com/intel/goresctrl v0.0.0-20210525145803-a183a106156f
 	github.com/json-iterator/go v1.1.11
 	github.com/onsi/ginkgo v1.16.2
 	github.com/onsi/gomega v1.12.0
@@ -67,6 +68,7 @@ require (
 	k8s.io/utils v0.0.0-20210305010621-2afb4311ab10
 	mvdan.cc/sh/v3 v3.3.0
 	sigs.k8s.io/release-utils v0.2.1
+	sigs.k8s.io/yaml v1.2.0
 )
 
 replace (
