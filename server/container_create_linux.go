@@ -21,6 +21,7 @@ import (
 	"github.com/cri-o/cri-o/internal/config/cgmgr"
 	"github.com/cri-o/cri-o/internal/config/device"
 	"github.com/cri-o/cri-o/internal/config/node"
+	"github.com/cri-o/cri-o/internal/config/rdt"
 	"github.com/cri-o/cri-o/internal/lib/sandbox"
 	"github.com/cri-o/cri-o/internal/log"
 	oci "github.com/cri-o/cri-o/internal/oci"
@@ -575,6 +576,17 @@ func (s *Server) createSandboxContainer(ctx context.Context, ctr ctrIface.Contai
 		return nil, err
 	}
 
+	// Get RDT class
+	if rdtClass, ok := rdtClassFromAnnotations(containerConfig.Annotations); ok {
+		if s.Config().Rdt().Enabled() {
+			log.Debugf(ctx, "Setting RDT ClosID of container %s to %q", containerID, rdt.ResctrlPrefix+rdtClass)
+			// TODO: patch runtime-tools to support setting ClosID via a helper func similar to SetLinuxIntelRdtL3CacheSchema()
+			specgen.Config.Linux.IntelRdt = &rspec.LinuxIntelRdt{ClosID: rdt.ResctrlPrefix + rdtClass}
+		} else {
+			log.Debugf(ctx, "RDT disabled, not setting RDT class of container %s", containerID)
+		}
+	}
+
 	err = ctr.SpecAddAnnotations(ctx, sb, containerVolumes, mountPoint, containerImageConfig.Config.StopSignal, imgResult, s.config.CgroupManager().IsSystemd(), node.SystemdHasCollectMode())
 	if err != nil {
 		return nil, err
@@ -968,4 +980,9 @@ func setupSystemd(mounts []rspec.Mount, g generate.Generator) {
 		g.AddLinuxMaskedPaths("/sys/fs/cgroup/systemd/release_agent")
 	}
 	g.AddProcessEnv("container", "crio")
+}
+
+func rdtClassFromAnnotations(containerAnnotations map[string]string) (string, bool) {
+	rdtClass, ok := containerAnnotations[crioann.RdtContainerAnnotation]
+	return rdtClass, ok
 }

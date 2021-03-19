@@ -27,6 +27,10 @@ const (
 
 	// OCISeccompBPFHookAnnotation is the annotation used by the OCI seccomp BPF hook for tracing container syscalls
 	OCISeccompBPFHookAnnotation = "io.containers.trace-syscall"
+
+	// RdtContainerAnnotation is the CRI level container annotation for setting
+	// the RDT class (CLOS) of a container
+	RdtContainerAnnotation = "io.kubernetes.cri.rdt-class"
 )
 
 var AllAllowedAnnotations = []string{
@@ -38,4 +42,5 @@ var AllAllowedAnnotations = []string{
 	CPUQuotaAnnotation,
 	IRQLoadBalancingAnnotation,
 	OCISeccompBPFHookAnnotation,
+	RdtContainerAnnotation,
 }
