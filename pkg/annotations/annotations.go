@@ -31,6 +31,14 @@ const (
 	// RdtContainerAnnotation is the CRI level container annotation for setting
 	// the RDT class (CLOS) of a container
 	RdtContainerAnnotation = "io.kubernetes.cri.rdt-class"
+
+	// RdtPodAnnotation is a Pod annotation for setting the RDT class (CLOS) of
+	// all containers of the pod
+	RdtPodAnnotation = "rdt.resources.beta.kubernetes.io/pod"
+
+	// RdtPodAnnotationContainerPrefix is prefix for per-container Pod annotation
+	// for setting the RDT class (CLOS) of one container of the pod
+	RdtPodAnnotationContainerPrefix = "rdt.resources.beta.kubernetes.io/container."
 )
 
 var AllAllowedAnnotations = []string{
