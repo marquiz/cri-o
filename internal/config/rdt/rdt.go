@@ -70,14 +70,6 @@ func (c *Config) Load(path string) error {
 	return nil
 }
 
-func (c *Config) Apply() error {
-	if err := rdt.SetConfig(c.config, true); err != nil {
-		return errors.Wrap(err, "configuring RDT failed")
-	}
-	logrus.Infof("RDT successfully configured")
-	return nil
-}
-
 func loadConfigFile(path string) (*rdt.Config, error) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
