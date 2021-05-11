@@ -55,14 +55,9 @@ func (c *Config) Load(path string) error {
 		return nil
 	}
 
-	data, err := ioutil.ReadFile(path)
+	tmpCfg, err := loadConfigFile(path)
 	if err != nil {
-		return errors.Wrap(err, "reading rdt config file failed")
-	}
-
-	tmpCfg := &rdt.Config{}
-	if err = yaml.Unmarshal(data, &tmpCfg); err != nil {
-		return errors.Wrap(err, "parsing RDT config failed")
+		return err
 	}
 
 	if err := rdt.SetConfig(tmpCfg, true); err != nil {
@@ -81,4 +76,18 @@ func (c *Config) Apply() error {
 	}
 	logrus.Infof("RDT successfully configured")
 	return nil
+}
+
+func loadConfigFile(path string) (*rdt.Config, error) {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, errors.Wrap(err, "reading rdt config file failed")
+	}
+
+	c := &rdt.Config{}
+	if err = yaml.Unmarshal(data, c); err != nil {
+		return nil, errors.Wrap(err, "parsing RDT config failed")
+	}
+
+	return c, nil
 }
