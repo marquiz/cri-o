@@ -92,3 +92,15 @@ func loadConfigFile(path string) (*rdt.Config, error) {
 
 	return c, nil
 }
+
+func (c *Config) ContainerClassFromAnnotations(containerName string, containerAnnotations, podAnnotations map[string]string) (string, error) {
+	cls, err := rdt.ContainerClassFromAnnotations(containerName, containerAnnotations, podAnnotations)
+	if err != nil {
+		return "", err
+	}
+	if cls != "" && !c.Enabled() {
+		logrus.Debugf("RDT disabled, not setting RDT class of container %s", containerName)
+		cls = ""
+	}
+	return cls, nil
+}

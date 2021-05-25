@@ -1,5 +1,9 @@
 package annotations
 
+import (
+	"github.com/intel/goresctrl/pkg/rdt"
+)
+
 const (
 	// UsernsMode is the user namespace mode to use
 	UsernsModeAnnotation = "io.kubernetes.cri-o.userns-mode"
@@ -27,18 +31,6 @@ const (
 
 	// OCISeccompBPFHookAnnotation is the annotation used by the OCI seccomp BPF hook for tracing container syscalls
 	OCISeccompBPFHookAnnotation = "io.containers.trace-syscall"
-
-	// RdtContainerAnnotation is the CRI level container annotation for setting
-	// the RDT class (CLOS) of a container
-	RdtContainerAnnotation = "io.kubernetes.cri.rdt-class"
-
-	// RdtPodAnnotation is a Pod annotation for setting the RDT class (CLOS) of
-	// all containers of the pod
-	RdtPodAnnotation = "rdt.resources.beta.kubernetes.io/pod"
-
-	// RdtPodAnnotationContainerPrefix is prefix for per-container Pod annotation
-	// for setting the RDT class (CLOS) of one container of the pod
-	RdtPodAnnotationContainerPrefix = "rdt.resources.beta.kubernetes.io/container."
 )
 
 var AllAllowedAnnotations = []string{
@@ -50,5 +42,5 @@ var AllAllowedAnnotations = []string{
 	CPUQuotaAnnotation,
 	IRQLoadBalancingAnnotation,
 	OCISeccompBPFHookAnnotation,
-	RdtContainerAnnotation,
+	rdt.RdtContainerAnnotation,
 }

@@ -577,14 +577,14 @@ func (s *Server) createSandboxContainer(ctx context.Context, ctr ctrIface.Contai
 	}
 
 	// Get RDT class
-	if rdtClass, ok := rdtClassFromAnnotations(metadata.Name, containerConfig.Annotations, sb.Annotations()); ok {
-		if s.Config().Rdt().Enabled() {
-			log.Debugf(ctx, "Setting RDT ClosID of container %s to %q", containerID, rdt.ResctrlPrefix+rdtClass)
-			// TODO: patch runtime-tools to support setting ClosID via a helper func similar to SetLinuxIntelRdtL3CacheSchema()
-			specgen.Config.Linux.IntelRdt = &rspec.LinuxIntelRdt{ClosID: rdt.ResctrlPrefix + rdtClass}
-		} else {
-			log.Debugf(ctx, "RDT disabled, not setting RDT class of container %s", containerID)
-		}
+	rdtClass, err := s.Config().Rdt().ContainerClassFromAnnotations(metadata.Name, containerConfig.Annotations, sb.Annotations())
+	if err != nil {
+		return nil, err
+	}
+	if rdtClass != "" {
+		log.Debugf(ctx, "Setting RDT ClosID of container %s to %q", containerID, rdt.ResctrlPrefix+rdtClass)
+		// TODO: patch runtime-tools to support setting ClosID via a helper func similar to SetLinuxIntelRdtL3CacheSchema()
+		specgen.Config.Linux.IntelRdt = &rspec.LinuxIntelRdt{ClosID: rdt.ResctrlPrefix + rdtClass}
 	}
 
 	err = ctr.SpecAddAnnotations(ctx, sb, containerVolumes, mountPoint, containerImageConfig.Config.StopSignal, imgResult, s.config.CgroupManager().IsSystemd(), node.SystemdHasCollectMode())
@@ -980,15 +980,4 @@ func setupSystemd(mounts []rspec.Mount, g generate.Generator) {
 		g.AddLinuxMaskedPaths("/sys/fs/cgroup/systemd/release_agent")
 	}
 	g.AddProcessEnv("container", "crio")
-}
-
-func rdtClassFromAnnotations(containerName string, containerAnnotations, podAnnotations map[string]string) (string, bool) {
-	if rdtClass, ok := containerAnnotations[crioann.RdtContainerAnnotation]; ok {
-		return rdtClass, ok
-	}
-	if rdtClass, ok := podAnnotations[crioann.RdtPodAnnotationContainerPrefix+containerName]; ok {
-		return rdtClass, ok
-	}
-	rdtClass, ok := podAnnotations[crioann.RdtPodAnnotation]
-	return rdtClass, ok
 }
