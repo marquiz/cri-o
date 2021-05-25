@@ -18,40 +18,48 @@ const (
 )
 
 type Config struct {
-	enabled bool
-	config  *rdt.Config
+	supported bool
+	enabled   bool
+	config    *rdt.Config
 }
 
 // New creates a new RDT config instance
 func New() *Config {
 	c := &Config{
-		enabled: true,
-		config:  &rdt.Config{},
+		supported: true,
+		config:    &rdt.Config{},
 	}
 
 	rdt.SetLogger(logrus.StandardLogger())
 
 	if err := rdt.Initialize(ResctrlPrefix); err != nil {
 		logrus.Infof("RDT is not enabled: %v", err)
-		c.enabled = false
+		c.supported = false
 	}
 	return c
 }
 
-// Enabled returns true if RDT is enabled in the system
+// Supported returns true if RDT is enabled in the host system
+func (c *Config) Supported() bool {
+	return c.supported
+}
+
+// Enabled returns true if RDT is enabled in CRI-O
 func (c *Config) Enabled() bool {
 	return c.enabled
 }
 
 // Load loads and validates RDT config
 func (c *Config) Load(path string) error {
-	if !c.Enabled() {
-		logrus.Info("RDT is disabled")
+	c.enabled = false
+
+	if !c.Supported() {
+		logrus.Info("RDT not available in the host system")
 		return nil
 	}
 
 	if path == "" {
-		logrus.Info("No RDT config file specified, RDT not configured")
+		logrus.Info("No RDT config file specified, RDT not enabled")
 		return nil
 	}
 
@@ -64,7 +72,8 @@ func (c *Config) Load(path string) error {
 		return errors.Wrap(err, "configuring RDT failed")
 	}
 
-	logrus.Infof("RDT config successfully loaded from %q", path)
+	logrus.Infof("RDT enabled, config successfully loaded from %q", path)
+	c.enabled = true
 	c.config = tmpCfg
 
 	return nil
