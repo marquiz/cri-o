@@ -21,7 +21,6 @@ import (
 	"github.com/cri-o/cri-o/internal/config/cgmgr"
 	"github.com/cri-o/cri-o/internal/config/device"
 	"github.com/cri-o/cri-o/internal/config/node"
-	"github.com/cri-o/cri-o/internal/config/rdt"
 	ctrfactory "github.com/cri-o/cri-o/internal/factory/container"
 	"github.com/cri-o/cri-o/internal/lib/sandbox"
 	"github.com/cri-o/cri-o/internal/linklogs"
@@ -36,8 +35,6 @@ import (
 	"golang.org/x/sys/unix"
 	types "k8s.io/cri-api/pkg/apis/runtime/v1"
 	kubeletTypes "k8s.io/kubelet/pkg/types"
-
-	"github.com/intel/goresctrl/pkg/blockio"
 )
 
 const (
@@ -386,23 +383,6 @@ func (s *Server) createSandboxContainer(ctx context.Context, ctr ctrfactory.Cont
 		specgen.SetProcessApparmorProfile(profile)
 	}
 
-	// Get blockio class
-	if s.Config().BlockIO().Enabled() {
-		if blockioClass, err := blockio.ContainerClassFromAnnotations(metadata.Name, containerConfig.Annotations, sb.Annotations()); blockioClass != "" && err == nil {
-			if s.Config().BlockIO().ReloadRequired() {
-				if err := s.Config().BlockIO().Reload(); err != nil {
-					log.Warnf(ctx, "Reconfiguring blockio for container %s failed: %v", containerID, err)
-				}
-			}
-			if linuxBlockIO, err := blockio.OciLinuxBlockIO(blockioClass); err == nil {
-				if specgen.Config.Linux.Resources == nil {
-					specgen.Config.Linux.Resources = &rspec.LinuxResources{}
-				}
-				specgen.Config.Linux.Resources.BlockIO = linuxBlockIO
-			}
-		}
-	}
-
 	logPath, err := ctr.LogPath(sb.LogDir())
 	if err != nil {
 		return nil, err
@@ -665,15 +645,9 @@ func (s *Server) createSandboxContainer(ctx context.Context, ctr ctrfactory.Cont
 		seccompRef = ref
 	}
 
-	// Get RDT class
-	rdtClass, err := s.Config().Rdt().ContainerClassFromAnnotations(metadata.Name, containerConfig.Annotations, sb.Annotations())
-	if err != nil {
+	// Handle QoS resources
+	if err := s.handleContainerQoSResources(specgen.Config, containerConfig, sb); err != nil {
 		return nil, err
-	}
-	if rdtClass != "" {
-		log.Debugf(ctx, "Setting RDT ClosID of container %s to %q", containerID, rdt.ResctrlPrefix+rdtClass)
-		// TODO: patch runtime-tools to support setting ClosID via a helper func similar to SetLinuxIntelRdtL3CacheSchema()
-		specgen.Config.Linux.IntelRdt = &rspec.LinuxIntelRdt{ClosID: rdt.ResctrlPrefix + rdtClass}
 	}
 	// compute the runtime path for a given container
 	platform := containerInfo.Config.Platform.OS + "/" + containerInfo.Config.Platform.Architecture

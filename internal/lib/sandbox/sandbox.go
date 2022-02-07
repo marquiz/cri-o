@@ -65,6 +65,7 @@ type Sandbox struct {
 	containerEnvPath   string
 	podLinuxOverhead   *types.LinuxContainerResources
 	podLinuxResources  *types.LinuxContainerResources
+	qosResources       []*types.PodQOSResource
 }
 
 // DefaultShmSize is the default shm size
@@ -76,7 +77,7 @@ var ErrIDEmpty = errors.New("PodSandboxId should not be empty")
 // New creates and populates a new pod sandbox
 // New sandboxes have no containers, no infra container, and no network namespaces associated with them
 // An infra container must be attached before the sandbox is added to the state
-func New(id, namespace, name, kubeName, logDir string, labels, annotations map[string]string, processLabel, mountLabel string, metadata *types.PodSandboxMetadata, shmPath, cgroupParent string, privileged bool, runtimeHandler, resolvPath, hostname string, portMappings []*hostport.PortMapping, hostNetwork bool, createdAt time.Time, usernsMode string, overhead, resources *types.LinuxContainerResources) (*Sandbox, error) {
+func New(id, namespace, name, kubeName, logDir string, labels, annotations map[string]string, processLabel, mountLabel string, metadata *types.PodSandboxMetadata, shmPath, cgroupParent string, privileged bool, runtimeHandler, resolvPath, hostname string, portMappings []*hostport.PortMapping, hostNetwork bool, createdAt time.Time, usernsMode string, overhead, resources *types.LinuxContainerResources, qosResources []*types.PodQOSResource) (*Sandbox, error) {
 	sb := new(Sandbox)
 
 	sb.criSandbox = &types.PodSandbox{
@@ -104,6 +105,7 @@ func New(id, namespace, name, kubeName, logDir string, labels, annotations map[s
 	sb.usernsMode = usernsMode
 	sb.podLinuxOverhead = overhead
 	sb.podLinuxResources = resources
+	sb.qosResources = qosResources
 
 	return sb, nil
 }
@@ -178,6 +180,11 @@ func (s *Sandbox) ID() string {
 // UsernsMode returns the mode for setting the user namespace, if any.
 func (s *Sandbox) UsernsMode() string {
 	return s.usernsMode
+}
+
+// QoSResources returns the QoS resources of the pod.
+func (s *Sandbox) QoSResources() []*types.PodQOSResource {
+	return s.qosResources
 }
 
 // Namespace returns the namespace for the sandbox
