@@ -11,6 +11,46 @@ import (
 	types "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
+// getPodQoSResourcesInfo returns information about all container-level QoS resources.
+func (s *Server) getPodQoSResourcesInfo() []*types.QoSResourceInfo {
+	return []*types.QoSResourceInfo{}
+}
+
+// getContainerQoSResourcesInfo returns information about all container-level QoS resources.
+func (s *Server) getContainerQoSResourcesInfo() []*types.QoSResourceInfo {
+	info := []*types.QoSResourceInfo{}
+
+	// RDT
+	if rdtClasses := s.Config().Rdt().GetClasses(); len(rdtClasses) > 0 {
+		info = append(info,
+			&types.QoSResourceInfo{
+				Name:    types.QoSResourceRdt,
+				Mutable: false,
+				Classes: createClassInfos(rdtClasses...),
+			})
+	}
+
+	// blockio
+	if blockioClasses := s.Config().BlockIO().GetClasses(); len(blockioClasses) > 0 {
+		info = append(info,
+			&types.QoSResourceInfo{
+				Name:    types.QoSResourceBlockio,
+				Mutable: false,
+				Classes: createClassInfos(blockioClasses...),
+			})
+	}
+
+	return info
+}
+
+func createClassInfos(names ...string) []*types.QoSResourceClassInfo {
+	out := make([]*types.QoSResourceClassInfo, len(names))
+	for i, name := range names {
+		out[i] = &types.QoSResourceClassInfo{Name: name}
+	}
+	return out
+}
+
 // handleSandboxQoSResources handles QoS resource requests for a pod sandbox.
 func (s *Server) handleSandboxQoSResources(config *types.PodSandboxConfig) error {
 	for r, c := range config.GetQosResources().GetClasses() {

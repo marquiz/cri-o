@@ -33,6 +33,10 @@ func (s *Server) Status(ctx context.Context, req *types.StatusRequest) (*types.S
 				runtimeCondition,
 				networkCondition,
 			},
+			Resources: &types.ResourcesInfo{
+				PodQosResources:       s.getPodQoSResourcesInfo(),
+				ContainerQosResources: s.getContainerQoSResourcesInfo(),
+			},
 		},
 	}, nil
 }

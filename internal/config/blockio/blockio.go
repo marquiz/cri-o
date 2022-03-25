@@ -57,3 +57,12 @@ func (c *Config) Load(path string) error {
 	c.enabled = true
 	return nil
 }
+
+// GetClasses returns the names of available blockio classes.
+func (c *Config) GetClasses() []string {
+	if c.Enabled() {
+		return blockio.GetClasses()
+	}
+
+	return []string{}
+}
