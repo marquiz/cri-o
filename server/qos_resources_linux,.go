@@ -11,9 +11,17 @@ import (
 	types "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
+// HACK: dummyQoS resources
+var dummyPodQoSResourcesInfo []*types.QoSResourceInfo
+var dummyContainerQoSResourcesInfo []*types.QoSResourceInfo
+var dummyPodQoSResources map[string]map[string]struct{}
+var dummyContainerQoSResources map[string]map[string]struct{}
+
 // getPodQoSResourcesInfo returns information about all container-level QoS resources.
 func (s *Server) getPodQoSResourcesInfo() []*types.QoSResourceInfo {
-	return []*types.QoSResourceInfo{}
+	info := []*types.QoSResourceInfo{}
+	info = append(info, dummyPodQoSResourcesInfo...)
+	return info
 }
 
 // getContainerQoSResourcesInfo returns information about all container-level QoS resources.
@@ -40,6 +48,8 @@ func (s *Server) getContainerQoSResourcesInfo() []*types.QoSResourceInfo {
 			})
 	}
 
+	info = append(info, dummyContainerQoSResourcesInfo...)
+
 	return info
 }
 
@@ -56,7 +66,14 @@ func (s *Server) handleSandboxQoSResources(config *types.PodSandboxConfig) error
 	for r, c := range config.GetQosResources().GetClasses() {
 		switch r {
 		default:
-			return fmt.Errorf("unknown QoS resource type %q", r)
+			cr, ok := dummyPodQoSResources[r]
+			if !ok {
+				return fmt.Errorf("unknown QoS resource type %q", r)
+			}
+			if _, ok := cr[c]; !ok {
+				return fmt.Errorf("unknown %s class %q", r, c)
+			}
+			logrus.Infof("setting dummy QoS resource %s=%s", r, c)
 		}
 
 		if c == "" {
@@ -77,7 +94,15 @@ func (s *Server) handleContainerQoSResources(spec *rspec.Spec, container *types.
 			// container annotations as fallback interface and it isn't enough
 			// to rely on the QoS resources in CRI only
 		default:
-			return fmt.Errorf("unknown QoS resource type %q", r)
+			cr, ok := dummyContainerQoSResources[r]
+			if !ok {
+				return fmt.Errorf("unknown QoS resource type %q", r)
+			}
+			if _, ok := cr[c]; !ok {
+				return fmt.Errorf("unknown %s class %q", r, c)
+			}
+			logrus.Infof("setting dummy QoS resource %s=%s", r, c)
+
 		}
 
 		if c == "" {
@@ -172,4 +197,48 @@ func getClassFromResourceConfig(resourceType string, container *types.ContainerC
 		logrus.Debugf("%s class %q (%s) from container config (%s)", resourceType, cls, ok, containerName)
 	}
 	return cls, ok
+}
+
+func init() {
+	// Initialize our dummy QoS resources hack
+	dummuGen := func(in []*types.QoSResourceInfo) map[string]map[string]struct{} {
+		out := make(map[string]map[string]struct{}, len(in))
+		for _, info := range in {
+			classes := make(map[string]struct{}, len(info.Classes))
+			for _, c := range info.Classes {
+				classes[c.Name] = struct{}{}
+			}
+			out[info.Name] = classes
+		}
+		return out
+	}
+
+	dummyPodQoSResourcesInfo = []*types.QoSResourceInfo{
+		&types.QoSResourceInfo{
+			Name:    "podres-1",
+			Mutable: false,
+			Classes: createClassInfos("qos-a", "qos-b", "qos-c", "qos-d"),
+		},
+		&types.QoSResourceInfo{
+			Name:    "podres-2",
+			Mutable: false,
+			Classes: createClassInfos("cls-1", "cls-2", "cls-3", "cls-4", "cls-5"),
+		},
+	}
+
+	dummyContainerQoSResourcesInfo = []*types.QoSResourceInfo{
+		&types.QoSResourceInfo{
+			Name:    "dummy-1",
+			Mutable: false,
+			Classes: createClassInfos("class-a", "class-b", "class-c", "class-d"),
+		},
+		&types.QoSResourceInfo{
+			Name:    "dummy-2",
+			Mutable: false,
+			Classes: createClassInfos("platinum", "gold", "silver", "bronze"),
+		},
+	}
+
+	dummyPodQoSResources = dummuGen(dummyPodQoSResourcesInfo)
+	dummyContainerQoSResources = dummuGen(dummyContainerQoSResourcesInfo)
 }
