@@ -1,4 +1,4 @@
-go 1.21
+go 1.21.3
 
 module github.com/cri-o/cri-o
 
@@ -255,3 +255,5 @@ require (
 	tags.cncf.io/container-device-interface/specs-go v0.6.0 // indirect
 	zenhack.net/go/util v0.0.0-20230218002511-744d2d6d1739 // indirect
 )
+
+replace k8s.io/cri-api => github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20240104125421-94b9d9454519
