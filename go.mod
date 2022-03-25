@@ -256,4 +256,7 @@ require (
 	zenhack.net/go/util v0.0.0-20230218002511-744d2d6d1739 // indirect
 )
 
-replace k8s.io/cri-api => github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20240104125421-94b9d9454519
+replace (
+	github.com/containers/podman/v4 => github.com/marquiz/podman/v4 v4.0.0-20240104135230-eb5757c542e5
+	k8s.io/cri-api => github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20240104125421-94b9d9454519
+)
