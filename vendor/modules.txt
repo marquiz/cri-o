@@ -717,7 +717,7 @@ github.com/containers/ocicrypt/keywrap/pkcs7
 github.com/containers/ocicrypt/spec
 github.com/containers/ocicrypt/utils
 github.com/containers/ocicrypt/utils/keyprovider
-# github.com/containers/podman/v4 v4.3.0-rc1.0.20221108211503-757fdca77b0f
+# github.com/containers/podman/v4 v4.3.0-rc1.0.20221108211503-757fdca77b0f => github.com/marquiz/podman/v4 v4.0.0-20230113164848-09b06be1adbf
 ## explicit; go 1.17
 github.com/containers/podman/v4/cmd/podman/parse
 github.com/containers/podman/v4/libpod
@@ -3395,6 +3395,7 @@ sigs.k8s.io/zeitgeist/dependency
 sigs.k8s.io/zeitgeist/pkg/container
 sigs.k8s.io/zeitgeist/pkg/gitlab
 sigs.k8s.io/zeitgeist/upstream
+# github.com/containers/podman/v4 => github.com/marquiz/podman/v4 v4.0.0-20230113164848-09b06be1adbf
 # github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.1-0.20220617142545-8b9452f75cbc
 # github.com/u-root/u-root => github.com/u-root/u-root v0.8.1-0.20220307150114-d511ded1d944
 # k8s.io/api => k8s.io/kubernetes/staging/src/k8s.io/api v0.0.0-20221208195143-b46a3f887ca9

@@ -417,6 +417,7 @@ require (
 )
 
 replace (
+	github.com/containers/podman/v4 => github.com/marquiz/podman/v4 v4.0.0-20230113164848-09b06be1adbf
 	// TODO: Remove me when Podman uses a pinned runc version:
 	// https://github.com/containers/podman/blob/74aa681e59352257eb5f25f089dffa66d6345a3a/go.mod#L78
 	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.1-0.20220617142545-8b9452f75cbc
