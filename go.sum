@@ -1420,6 +1420,8 @@ github.com/manifoldco/promptui v0.9.0/go.mod h1:ka04sppxSGFAtxX0qhlYQjISsg9mR4GW
 github.com/maratori/testpackage v1.0.1/go.mod h1:ddKdw+XG0Phzhx8BFDTKgpWP4i7MpApTE5fXSKAqwDU=
 github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=
 github.com/markbates/safe v1.0.1/go.mod h1:nAqgmRi7cY2nqMc92/bSEeQA+R4OheNU2T1kNSCBdG0=
+github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230113100028-3a5b8e9e970d h1:ev8O452D0qxu4SGdace3y5DGr+bV9YaLKZro4l3Ss8w=
+github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230113100028-3a5b8e9e970d/go.mod h1:rg+8SkMFDkjaHfgCin+P2zZHbaxwNvS3caqT47mUBN8=
 github.com/marstr/guid v1.1.0/go.mod h1:74gB1z2wpxxInTG6yaqA7KrtM0NZ+RbrcqDvYHefzho=
 github.com/matoous/godox v0.0.0-20190911065817-5d6d842e92eb/go.mod h1:1BELzlh859Sh1c6+90blK8lbYy0kwQf1bYlBhBysy1s=
 github.com/matryer/is v1.2.0 h1:92UTHpy8CDwaJ08GqLDzhhuixiBUUD1p3AU6PHddz4A=
@@ -3016,6 +3018,7 @@ google.golang.org/grpc v1.46.2/go.mod h1:vN9eftEi1UMyUsIF80+uQXhHjbXYbm0uXoFCACu
 google.golang.org/grpc v1.47.0/go.mod h1:vN9eftEi1UMyUsIF80+uQXhHjbXYbm0uXoFCACuMGWk=
 google.golang.org/grpc v1.48.0/go.mod h1:vN9eftEi1UMyUsIF80+uQXhHjbXYbm0uXoFCACuMGWk=
 google.golang.org/grpc v1.49.0/go.mod h1:ZgQEeidpAuNRZ8iRrlBKXZQP1ghovWIVhdJRyCDK+GI=
+google.golang.org/grpc v1.51.0/go.mod h1:wgNDFcnuBGmxLKI/qn4T+m5BtEBYXJPvibbUPsAIPww=
 google.golang.org/grpc v1.52.0 h1:kd48UiU7EHsV4rnLyOJRuP/Il/UHE7gdDAQ+SZI7nZk=
 google.golang.org/grpc v1.52.0/go.mod h1:pu6fVzoFb+NBYNAvQL08ic+lvB2IojljRYuun5vorUY=
 google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0/go.mod h1:6Kw0yEErY5E/yWrBtf03jp27GLLJujG4z/JK95pnjjw=
@@ -3150,8 +3153,6 @@ k8s.io/kubernetes/staging/src/k8s.io/component-base v0.0.0-20221208195143-b46a3f
 k8s.io/kubernetes/staging/src/k8s.io/component-helpers v0.0.0-20221208195143-b46a3f887ca9 h1:Vyzhlq50GG1LnQloZcV3CMT7yuB9oGdXxDTEve7o8So=
 k8s.io/kubernetes/staging/src/k8s.io/component-helpers v0.0.0-20221208195143-b46a3f887ca9/go.mod h1:TRgcK5vUMwoC673WjIpSNbYV+Q9iaxBaEpZqC/JUlCI=
 k8s.io/kubernetes/staging/src/k8s.io/controller-manager v0.0.0-20221208195143-b46a3f887ca9/go.mod h1:3Rv1RmHjHVQQGtIruCns7Ly5CRvH+tbJ4PAXv+RSxuw=
-k8s.io/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20221208195143-b46a3f887ca9 h1:oqBFCuUB4ASwQ1D93a9Pr4sWVbCbiOLvTkpW7eOXm7M=
-k8s.io/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20221208195143-b46a3f887ca9/go.mod h1:UHA0kp7zlBcwGz49a13Ym/onXUdKIM9PRhSXDTl5qSE=
 k8s.io/kubernetes/staging/src/k8s.io/csi-translation-lib v0.0.0-20221208195143-b46a3f887ca9/go.mod h1:r+of8qWyFUpoYSodPns4JE3QrhQPrlWksGXXO3ir7BI=
 k8s.io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v0.0.0-20221208195143-b46a3f887ca9/go.mod h1:SaN0EKdFDjcL3huY7xteJOJAi74k7UHONktGL3eU3kw=
 k8s.io/kubernetes/staging/src/k8s.io/kms v0.0.0-20221208195143-b46a3f887ca9/go.mod h1:aX3FtLqoLXBu785fjclYoQi+rVGMuHWlDZG8mUGokno=
