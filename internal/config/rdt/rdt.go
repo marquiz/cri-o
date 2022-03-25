@@ -95,3 +95,16 @@ func loadConfigFile(path string) (*rdt.Config, error) {
 func (c *Config) ContainerClassFromAnnotations(containerName string, containerAnnotations, podAnnotations map[string]string) (string, error) {
 	return rdt.ContainerClassFromAnnotations(containerName, containerAnnotations, podAnnotations)
 }
+
+// GetClasses returns the names of available RDT classes.
+func (c *Config) GetClasses() []string {
+	classes := []string{}
+
+	if c.Enabled() {
+		for _, c := range rdt.GetClasses() {
+			classes = append(classes, c.Name())
+		}
+	}
+
+	return classes
+}
