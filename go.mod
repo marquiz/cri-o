@@ -435,7 +435,7 @@ replace (
 	k8s.io/component-helpers => k8s.io/kubernetes/staging/src/k8s.io/component-helpers v0.0.0-20221208195143-b46a3f887ca9
 	k8s.io/controller-manager => k8s.io/kubernetes/staging/src/k8s.io/controller-manager v0.0.0-20221208195143-b46a3f887ca9
 
-	k8s.io/cri-api => github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230113144110-253678c7a6b7
+	k8s.io/cri-api => github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230113162836-98ade832d8d8
 	k8s.io/csi-translation-lib => k8s.io/kubernetes/staging/src/k8s.io/csi-translation-lib v0.0.0-20221208195143-b46a3f887ca9
 	k8s.io/dynamic-resource-allocation => k8s.io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v0.0.0-20221208195143-b46a3f887ca9
 	k8s.io/kms => k8s.io/kubernetes/staging/src/k8s.io/kms v0.0.0-20221208195143-b46a3f887ca9
