@@ -56,7 +56,7 @@ func (s *Server) getContainerQoSResourcesInfo() []*types.QOSResourceInfo {
 func createClassInfos(names ...string) []*types.QOSResourceClassInfo {
 	out := make([]*types.QOSResourceClassInfo, len(names))
 	for i, name := range names {
-		out[i] = &types.QOSResourceClassInfo{Name: name}
+		out[i] = &types.QOSResourceClassInfo{Name: name, Capacity: uint64(i)}
 	}
 	return out
 }
