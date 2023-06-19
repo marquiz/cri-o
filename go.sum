@@ -1473,6 +1473,8 @@ github.com/manifoldco/promptui v0.9.0 h1:3V4HzJk1TtXW1MTZMP7mdlwbBpIinw3HztaIlYt
 github.com/manifoldco/promptui v0.9.0/go.mod h1:ka04sppxSGFAtxX0qhlYQjISsg9mR4GWtQEhdbn6Pgg=
 github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=
 github.com/markbates/safe v1.0.1/go.mod h1:nAqgmRi7cY2nqMc92/bSEeQA+R4OheNU2T1kNSCBdG0=
+github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230616143633-ed51117bc658 h1:b/lUlC4g9oPLx0OK4vmK61Fy9xXR+lzwEWzVkKtaKrE=
+github.com/marquiz/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230616143633-ed51117bc658/go.mod h1:MbnfG8ci5leu9CmfBzRy7zZAaxwQOkf3c69syo2xs7A=
 github.com/marstr/guid v1.1.0/go.mod h1:74gB1z2wpxxInTG6yaqA7KrtM0NZ+RbrcqDvYHefzho=
 github.com/matryer/is v1.2.0 h1:92UTHpy8CDwaJ08GqLDzhhuixiBUUD1p3AU6PHddz4A=
 github.com/matryer/is v1.2.0/go.mod h1:2fLPjFQM9rhQ15aVEtbuwhJinnOqrmgXPNdZsdwlWXA=
@@ -2872,8 +2874,6 @@ k8s.io/kubernetes/staging/src/k8s.io/component-base v0.0.0-20230607070612-4c40d7
 k8s.io/kubernetes/staging/src/k8s.io/component-base v0.0.0-20230607070612-4c40d749006a/go.mod h1:Jr2zKZ8l0ClvqT295Uhp214xc4qmXp3HP/4yrl5nG2Y=
 k8s.io/kubernetes/staging/src/k8s.io/component-helpers v0.0.0-20230607070612-4c40d749006a/go.mod h1:JRs8113e0euC//KcskdGT6bMzY5jwZ74FzH1GNpR7N8=
 k8s.io/kubernetes/staging/src/k8s.io/controller-manager v0.0.0-20230607070612-4c40d749006a/go.mod h1:bVXmSMHapgZrvCtb+eUGceoYnPsM5WsQoMQ5puOxLEE=
-k8s.io/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230607070612-4c40d749006a h1:xqPe8e7p4sR17sWdMPgLq9psmFVcGVJ+bAGxXnqqKy4=
-k8s.io/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20230607070612-4c40d749006a/go.mod h1:MbnfG8ci5leu9CmfBzRy7zZAaxwQOkf3c69syo2xs7A=
 k8s.io/kubernetes/staging/src/k8s.io/csi-translation-lib v0.0.0-20230607070612-4c40d749006a/go.mod h1:4PZIoG2Ykl0S6FUVJWeBystXx4sHKlLuh2KUDKbD+rQ=
 k8s.io/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v0.0.0-20230607070612-4c40d749006a/go.mod h1:Ac9vRBGAVAATEEHvJLzBS3TDySpm46WBraSlAXoef8I=
 k8s.io/kubernetes/staging/src/k8s.io/kms v0.0.0-20230607070612-4c40d749006a/go.mod h1:ZIUdPLMGO7h0+CKqzm2z0dWe3ylyfIhTSQP8FplAtvs=
