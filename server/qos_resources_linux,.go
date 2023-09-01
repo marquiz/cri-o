@@ -226,29 +226,13 @@ func init() {
 
 	dummyPodQoSResourcesInfo = []*types.QOSResourceInfo{
 		&types.QOSResourceInfo{
-			Name:    "podres-1",
+			Name:    "net",
 			Mutable: false,
-			Classes: createClassInfos("qos-a", "qos-b", "qos-c", "qos-d"),
-		},
-		&types.QOSResourceInfo{
-			Name:    "podres-2",
-			Mutable: false,
-			Classes: createClassInfos("cls-1", "cls-2", "cls-3", "cls-4", "cls-5"),
+			Classes: createClassInfos("fast", "normal", "slow"),
 		},
 	}
 
-	dummyContainerQoSResourcesInfo = []*types.QOSResourceInfo{
-		&types.QOSResourceInfo{
-			Name:    "dummy-1",
-			Mutable: false,
-			Classes: createClassInfos("class-a", "class-b", "class-c", "class-d"),
-		},
-		&types.QOSResourceInfo{
-			Name:    "dummy-2",
-			Mutable: false,
-			Classes: createClassInfos("platinum", "gold", "silver", "bronze"),
-		},
-	}
+	dummyContainerQoSResourcesInfo = []*types.QOSResourceInfo{}
 
 	dummyPodQoSResources = dummuGen(dummyPodQoSResourcesInfo)
 	dummyContainerQoSResources = dummuGen(dummyContainerQoSResourcesInfo)
