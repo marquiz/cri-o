@@ -50,6 +50,7 @@ type remoteRuntimeService struct {
 	// Cache last per-container error message to reduce log spam
 	logReduction *logreduction.LogReduction
 	logger       *klog.Logger
+	conn         *grpc.ClientConn
 }
 
 const (
@@ -127,6 +128,7 @@ func NewRemoteRuntimeService(endpoint string, connectionTimeout time.Duration, t
 		timeout:      connectionTimeout,
 		logReduction: logreduction.NewLogReduction(identicalErrorDelay),
 		logger:       logger,
+		conn:         conn,
 	}
 
 	if err := service.validateServiceConnection(ctx, conn, endpoint); err != nil {
@@ -134,6 +136,12 @@ func NewRemoteRuntimeService(endpoint string, connectionTimeout time.Duration, t
 	}
 
 	return service, nil
+}
+
+// Close will shutdown the internal gRPC client connection.
+func (r *remoteRuntimeService) Close() error {
+	r.log(3, "Closing runtime service connection")
+	return r.conn.Close()
 }
 
 func (r *remoteRuntimeService) log(level int, msg string, keyAndValues ...any) {
@@ -923,4 +931,29 @@ func (r *remoteRuntimeService) RuntimeConfig(ctx context.Context) (*runtimeapi.R
 	r.log(10, "[RemoteRuntimeService] RuntimeConfigResponse", "linuxConfig", resp.GetLinux())
 
 	return resp, nil
+}
+
+// GetDynamicRuntimeConfig gets runtime configurations from the CRI runtime.
+func (r *remoteRuntimeService) GetDynamicRuntimeConfig(runtimeConfigCh chan *runtimeapi.DynamicRuntimeConfigResponse) error {
+	runtimeConfigStreamingClient, err := r.runtimeClient.GetDynamicRuntimeConfig(context.Background(), &runtimeapi.DynamicRuntimeConfigRequest{})
+	if err != nil {
+		r.logErr(err, "GetDynamicRuntimeConfig failed to get streaming client")
+		return err
+	}
+
+	for {
+		resp, err := runtimeConfigStreamingClient.Recv()
+		if err == io.EOF {
+			r.logErr(err, "dynamic runtime config stream is closed")
+			return err
+		}
+		if err != nil {
+			r.logErr(err, "failed to receive dynamic runtime config")
+			return err
+		}
+		if resp != nil {
+			runtimeConfigCh <- resp
+			r.log(0, "dynamic runtime config is received", "resp", resp)
+		}
+	}
 }

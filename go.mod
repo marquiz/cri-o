@@ -2,6 +2,11 @@ go 1.24.6
 
 module github.com/cri-o/cri-o
 
+replace (
+	k8s.io/cri-api => github.com/marquiz/cri-api v0.0.0-20250911104717-64ceb86d37e3
+	k8s.io/cri-client => github.com/marquiz/cri-client v0.0.0-20250911105148-5a8451164f93
+)
+
 require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/Microsoft/go-winio v0.6.2
