@@ -123,6 +123,10 @@ type RuntimeService interface {
 	Status(ctx context.Context, verbose bool) (*runtimeapi.StatusResponse, error)
 	// RuntimeConfig returns the configuration information of the runtime.
 	RuntimeConfig(ctx context.Context) (*runtimeapi.RuntimeConfigResponse, error)
+	// Close will shutdown the internal gRPC client connection.
+	Close() error
+	// GetDynamicRuntimeConfig gets runtime configurations from the CRI runtime
+	GetDynamicRuntimeConfig(runtimeConfigCh chan *runtimeapi.DynamicRuntimeConfigResponse) error
 }
 
 // ImageManagerService interface should be implemented by a container image
@@ -139,4 +143,6 @@ type ImageManagerService interface {
 	RemoveImage(ctx context.Context, image *runtimeapi.ImageSpec) error
 	// ImageFsInfo returns information of the filesystem(s) used to store the read-only layers and the writeable layer.
 	ImageFsInfo(ctx context.Context) (*runtimeapi.ImageFsInfoResponse, error)
+	// Close will shutdown the internal gRPC client connection.
+	Close() error
 }
