@@ -82,8 +82,6 @@ github.com/containerd/go-runc v1.1.0 h1:OX4f+/i2y5sUT7LhmcJH7GYrjjhHa1QI4e8yO0gG
 github.com/containerd/go-runc v1.1.0/go.mod h1:xJv2hFF7GvHtTJd9JqTS2UVxMkULUYw4JN5XAUZqH5U=
 github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
 github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
-github.com/containerd/nri v0.10.0 h1:bt2NzfvlY6OJE0i+fB5WVeGQEycxY7iFVQpEbh7J3Go=
-github.com/containerd/nri v0.10.0/go.mod h1:5VyvLa/4uL8FjyO8nis1UjbCutXDpngil17KvBSL6BU=
 github.com/containerd/otelttrpc v0.1.0 h1:UOX68eVTE8H/T45JveIg+I22Ev2aFj4qPITCmXsskjw=
 github.com/containerd/otelttrpc v0.1.0/go.mod h1:XhoA2VvaGPW1clB2ULwrBZfXVuEWuyOd2NUD1IM0yTg=
 github.com/containerd/platforms v0.2.1 h1:zvwtM3rz2YHPQsF2CHYM8+KtB5dvhISiXh5ZpSBQv6A=
@@ -336,6 +334,8 @@ github.com/marquiz/cri-api v0.0.0-20250911104717-64ceb86d37e3 h1:vsPkrVP+KeuqTsd
 github.com/marquiz/cri-api v0.0.0-20250911104717-64ceb86d37e3/go.mod h1:0PSz/9Ur2g6ojs8/pHZkngb+phUADnz+UEINsOLgpx4=
 github.com/marquiz/cri-client v0.0.0-20250911105148-5a8451164f93 h1:0u/jscBY5bnHr1V4RX3LzWaWY3dZoptjHCa9S8oB/bk=
 github.com/marquiz/cri-client v0.0.0-20250911105148-5a8451164f93/go.mod h1:9xT8of/59hCQcoagp9Vvv3IGZLq/d/vqBq69iK1iEmI=
+github.com/marquiz/nri v0.0.0-20250911134711-ce88ec1c18ff h1:GrBK1dxHT9Yl+pr3NvXpVf6ii5WokZhsxeDc0MSV8nM=
+github.com/marquiz/nri v0.0.0-20250911134711-ce88ec1c18ff/go.mod h1:F1gjMk7qZTVSpsDL8QBh8WT1FK5xRnXWnhQ6GbwPeUo=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
