@@ -3,6 +3,7 @@ go 1.24.6
 module github.com/cri-o/cri-o
 
 replace (
+	github.com/containerd/nri => github.com/marquiz/nri v0.0.0-20250911131059-5ef383f35e75
 	k8s.io/cri-api => github.com/marquiz/cri-api v0.0.0-20250911104826-be864133b9c4
 	k8s.io/cri-client => github.com/marquiz/cri-client v0.0.0-20250911105148-5a8451164f93
 )
