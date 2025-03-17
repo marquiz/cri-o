@@ -7,6 +7,7 @@ import (
 
 	nri "github.com/containerd/nri/pkg/adaptation"
 	"github.com/sirupsen/logrus"
+	"sigs.k8s.io/yaml"
 
 	config "github.com/cri-o/cri-o/internal/config/nri"
 	"github.com/cri-o/cri-o/internal/log"
@@ -112,16 +113,17 @@ func New(cfg *config.Config) (*local, error) {
 	}
 
 	var (
-		runtimeName    = "cri-o"
-		runtimeVersion = vInfo.Version
-		opts           = cfg.ToOptions()
-		syncFn         = l.syncPlugin
-		updateFn       = l.updateFromPlugin
+		runtimeName           = "cri-o"
+		runtimeVersion        = vInfo.Version
+		opts                  = cfg.ToOptions()
+		syncFn                = l.syncPlugin
+		updateFn              = l.updateFromPlugin
+		updateNodeResourcesFn = l.updateNodeResources
 	)
 
 	cfg.ConfigureTimeouts()
 
-	l.nri, err = nri.New(runtimeName, runtimeVersion, syncFn, updateFn, opts...)
+	l.nri, err = nri.New(runtimeName, runtimeVersion, syncFn, updateFn, updateNodeResourcesFn, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize NRI interface: %w", err)
 	}
@@ -522,4 +524,18 @@ func (l *local) getState(id string) State {
 	}
 
 	return Removed
+}
+
+func (l *local) updateNodeResources(ctx context.Context, req *nri.UpdateNodeResourcesRequest) error {
+	l.Lock()
+	defer l.Unlock()
+
+	log.Infof(ctx, "Node resources update from NRI")
+	if data, err := yaml.Marshal(req); err != nil {
+		log.Warnf(ctx, "Failed to marshal node resources update: %v", err)
+	} else {
+		log.Infof(ctx, "Node resources update: %s", data)
+	}
+
+	return nil
 }
