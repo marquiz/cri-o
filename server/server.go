@@ -101,6 +101,11 @@ type Server struct {
 
 	types.UnsafeImageServiceServer
 	types.UnsafeRuntimeServiceServer
+
+	// system info and resources
+	machineInfoLock  sync.RWMutex
+	systemAttributes map[string]string
+	resourceTopology *types.ResourceTopology
 }
 
 // pullArguments are used to identify a pullOperation via an input image name and

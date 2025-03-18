@@ -35,7 +35,7 @@ func (s *Server) GetDynamicRuntimeConfig(_ *types.DynamicRuntimeConfigRequest, r
 
 	// Send info when client connects
 	// TODO: maybe refactor the code and do caching of info
-	s.fetchMachineInfo(context.Background())
+	s.sendMachineInfo(context.Background())
 
 	// wait here until we don't want to send events to this client anymore
 	<-conn.stop
@@ -81,11 +81,28 @@ func (s *Server) broadcastRuntimeConfig() {
 func (s *Server) machineInfoUpdater(ctx context.Context) {
 	ticker := time.NewTicker(time.Second * 30)
 	for ; ; <-ticker.C {
-		s.fetchMachineInfo(ctx)
+		if s.resourceTopology == nil {
+			// We only do periodic discovery/updates if NRI has not provided the info
+			s.sendMachineInfo(ctx)
+		}
 	}
 }
 
-func (s *Server) fetchMachineInfo(ctx context.Context) {
+// sendMachineInfo sends the machine info to all clients
+func (s *Server) sendMachineInfo(ctx context.Context) {
+	s.machineInfoLock.Lock()
+	defer s.machineInfoLock.Unlock()
+
+	rsp := types.DynamicRuntimeConfigResponse{
+		ResourceTopology: s.getResourceTopology(ctx),
+		SystemAttributes: s.getSystemAttributes(ctx),
+	}
+	str, _ := yaml.Marshal(rsp)
+	log.Infof(ctx, "Sending machine info: %s", str)
+	s.DynamicRuntimeConfigChan <- rsp
+}
+
+func (s *Server) discoverResourceTopology(ctx context.Context) *types.ResourceTopology {
 	fmt.Println("Fetching the  machine info...")
 	sys, e := sysfs.DiscoverSystem()
 	if e != nil {
@@ -152,16 +169,34 @@ func (s *Server) fetchMachineInfo(ctx context.Context) {
 		})
 	}
 
-	rsp := types.DynamicRuntimeConfigResponse{
-		ResourceTopology: &res,
-		SystemAttributes: getSystemAttributes(ctx),
-	}
-	str, _ := yaml.Marshal(rsp)
-	log.Infof(ctx, "Sending machine info: %s", str)
-	s.DynamicRuntimeConfigChan <- rsp
+	return &res
 }
 
-func getSystemAttributes(ctx context.Context) map[string]string {
+func (s *Server) setResourceTopology(res *types.ResourceTopology) {
+	s.machineInfoLock.Lock()
+	defer s.machineInfoLock.Unlock()
+	s.resourceTopology = res
+}
+
+// getResourceTopology returns the up-to-date resource topology.
+// NOTE: must be called with machineInfoLock held
+func (s *Server) getResourceTopology(ctx context.Context) *types.ResourceTopology {
+	if s.resourceTopology != nil {
+		return s.resourceTopology
+	}
+
+	// NOTE: we don't cache the result of discoverResourceTopology so that we
+	// can update it periodically based on changes
+	return s.discoverResourceTopology(ctx)
+}
+
+// getSystemAttributes returns the system attributes.
+// NOTE: must be called with machineInfoLock held
+func (s *Server) getSystemAttributes(ctx context.Context) map[string]string {
+	if s.systemAttributes != nil {
+		return s.systemAttributes
+	}
+
 	attrs := map[string]string{}
 	for name, path := range map[string]string{
 		"machine-id":  "/etc/machine-id",
@@ -174,6 +209,7 @@ func getSystemAttributes(ctx context.Context) map[string]string {
 		}
 		attrs[name] = strings.TrimSpace(string(value))
 	}
+	s.systemAttributes = attrs
 	return attrs
 }
 
