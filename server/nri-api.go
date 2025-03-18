@@ -10,7 +10,9 @@ import (
 	"github.com/intel/goresctrl/pkg/blockio"
 	rspec "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/opencontainers/runtime-tools/generate"
+	"k8s.io/apimachinery/pkg/api/resource"
 	cri "k8s.io/cri-api/pkg/apis/runtime/v1"
+	types "k8s.io/cri-api/pkg/apis/runtime/v1"
 	"tags.cncf.io/container-device-interface/pkg/cdi"
 
 	"github.com/cri-o/cri-o/internal/config/cgmgr"
@@ -474,6 +476,83 @@ func (a *nriAPI) EvictContainer(ctx context.Context, e *api.ContainerEviction) e
 	}
 
 	return nil
+}
+
+func (a *nriAPI) UpdateNodeResources(ctx context.Context, r *api.UpdateNodeResourcesRequest) error {
+	if !a.isEnabled() {
+		return fmt.Errorf("NRI is not enabled")
+	}
+
+	if r == nil {
+		return nil
+	}
+
+	rt := updateNodeResourcesRequestToCRI(r)
+	a.cri.setResourceTopology(rt)
+
+	a.cri.sendMachineInfo(ctx)
+
+	return nil
+}
+
+// TODO: move this to nri api(?)
+func updateNodeResourcesRequestToCRI(r *api.UpdateNodeResourcesRequest) *types.ResourceTopology {
+	if r == nil {
+		return nil
+	}
+
+	zones := make([]*types.ResourceTopologyZone, len(r.ResourceTopology.Zones))
+	for i, zone := range r.ResourceTopology.Zones {
+		zones[i] = resourceTopologyZoneToCRI(zone)
+	}
+
+	return &types.ResourceTopology{
+		Zones: zones,
+	}
+}
+
+func resourceTopologyZoneToCRI(z *api.ResourceTopologyZone) *types.ResourceTopologyZone {
+	if z == nil {
+		return nil
+	}
+
+	return &types.ResourceTopologyZone{
+		Name:       z.Name,
+		Type:       z.Type,
+		Parent:     z.Parent,
+		Attributes: z.Attributes,
+		Resources:  resourceTopologyResourcesToCRI(z.Resources),
+		Costs:      resourceTopologyCostsToCRI(z.Costs),
+	}
+}
+
+func resourceTopologyResourcesToCRI(r []*api.ResourceTopologyResourceInfo) []*types.ResourceTopologyResourceInfo {
+	ret := make([]*types.ResourceTopologyResourceInfo, len(r))
+	for i, res := range r {
+		quantity, err := resource.ParseQuantity(res.Capacity)
+		if err != nil {
+			log.Warnf(context.TODO(), "Failed to parse quantity %q: %v", res.Capacity, err)
+			continue
+		}
+
+		ret[i] = &types.ResourceTopologyResourceInfo{
+			Name:     res.Name,
+			Capacity: &quantity,
+		}
+	}
+
+	return ret
+}
+
+func resourceTopologyCostsToCRI(c []*api.ResourceTopologyCost) []*types.ResourceTopologyCost {
+	ret := make([]*types.ResourceTopologyCost, len(c))
+	for i, cost := range c {
+		ret[i] = &types.ResourceTopologyCost{
+			Name:  cost.Name,
+			Value: cost.Value,
+		}
+	}
+	return ret
 }
 
 //
