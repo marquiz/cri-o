@@ -10,7 +10,9 @@ import (
 	"github.com/intel/goresctrl/pkg/blockio"
 	rspec "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/opencontainers/runtime-tools/generate"
+	"k8s.io/apimachinery/pkg/api/resource"
 	cri "k8s.io/cri-api/pkg/apis/runtime/v1"
+	types "k8s.io/cri-api/pkg/apis/runtime/v1"
 	"tags.cncf.io/container-device-interface/pkg/cdi"
 
 	"github.com/cri-o/cri-o/internal/config/cgmgr"
@@ -474,6 +476,68 @@ func (a *nriAPI) EvictContainer(ctx context.Context, e *api.ContainerEviction) e
 	}
 
 	return nil
+}
+
+func (a *nriAPI) UpdateNodeResources(ctx context.Context, r *api.UpdateNodeResourcesRequest) error {
+	if !a.isEnabled() {
+		return fmt.Errorf("NRI is not enabled")
+	}
+
+	if r == nil {
+		return nil
+	}
+
+	rt := updateNodeResourcesRequestToCRI(r)
+	a.cri.setResourceTopology(rt)
+
+	a.cri.sendMachineInfo(ctx)
+
+	return nil
+}
+
+// TODO: move this to nri api(?)
+func updateNodeResourcesRequestToCRI(r *api.UpdateNodeResourcesRequest) *types.ResourceTopology {
+	if r == nil {
+		return nil
+	}
+
+	cpuInfo := make([]*types.ResourceCpuInfo, len(r.CpuInfo))
+	for i, cpu := range r.CpuInfo {
+		cpuInfo[i] = &types.ResourceCpuInfo{
+			Id:         cpu.Id,
+			CoreId:     cpu.CoreId,
+			CpuGroupId: cpu.CpuGroupId,
+			SocketId:   cpu.SocketId,
+		}
+	}
+
+	numaNodeInfo := make([]*types.ResourceNumaNodeInfo, len(r.NumaNodeInfo))
+	for i, numaNode := range r.NumaNodeInfo {
+		res := make([]*types.ResourceTopologyResourceInfo, len(numaNode.Resources))
+		for j, resourceInfo := range numaNode.Resources {
+			res[j] = &types.ResourceTopologyResourceInfo{
+				Name:     resourceInfo.Name,
+				Capacity: resource.NewQuantity(resourceInfo.Capacity, resource.BinarySI),
+			}
+		}
+
+		numaNodeInfo[i] = &types.ResourceNumaNodeInfo{
+			Id:        numaNode.Id,
+			Distance:  numaNode.Distance,
+			CpuIds:    numaNode.CpuIds,
+			Resources: res,
+		}
+	}
+
+	swapInfo := &types.ResourceSwapInfo{
+		Capacity: resource.NewQuantity(r.SwapInfo.Capacity, resource.BinarySI),
+	}
+
+	return &types.ResourceTopology{
+		CpuInfo:      cpuInfo,
+		NumaNodeInfo: numaNodeInfo,
+		SwapInfo:     swapInfo,
+	}
 }
 
 //

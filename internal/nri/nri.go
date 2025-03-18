@@ -537,5 +537,5 @@ func (l *local) updateNodeResources(ctx context.Context, req *nri.UpdateNodeReso
 		log.Infof(ctx, "Node resources update: %s", data)
 	}
 
-	return nil
+	return domains.updateNodeResources(ctx, req)
 }

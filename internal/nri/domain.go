@@ -35,6 +35,9 @@ type Domain interface {
 
 	// EvictContainer evicts the requested container.
 	EvictContainer(context.Context, *nri.ContainerEviction) error
+
+	// UpdateNodeResources updates the node resources.
+	UpdateNodeResources(context.Context, *nri.UpdateNodeResourcesRequest) error
 }
 
 // SetDomain registers the domain with NRI.
@@ -106,6 +109,10 @@ func (t *domainTable) evictContainers(ctx context.Context, evict []*nri.Containe
 	}
 
 	return nil, nil
+}
+
+func (t *domainTable) updateNodeResources(ctx context.Context, req *nri.UpdateNodeResourcesRequest) error {
+	return t.domain.UpdateNodeResources(ctx, req)
 }
 
 var domains = &domainTable{}
